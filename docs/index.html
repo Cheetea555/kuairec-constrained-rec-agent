@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>约束感知的短视频推荐 Agent · 在线演示</title>
+<meta name="description" content="KuaiRec 数据集上的约束感知短视频推荐 Agent：BPR 矩阵分解排序、同类上限重排、可解释理由。纯前端实时打分演示。">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <div class="brand">
+      <span class="mark">Rec</span>
+      <span class="brandtxt">约束感知的短视频推荐 Agent</span>
+    </div>
+    <nav class="links">
+      <a href="https://github.com/Cheetea555/kuairec-constrained-rec-agent" target="_blank" rel="noopener">代码仓库</a>
+      <a href="#how">本地运行</a>
+      <a href="#metrics">实验结果</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>告诉它“看什么、要几条、同类最多几条”</h1>
+    <p class="sub">一个在 KuaiRec 快手公开数据集上训练的推荐 Agent。约束解析 → 候选召回 → BPR 矩阵分解排序 → 同类上限重排 → 逐条理由 → 自检，每一步都可核对。</p>
+    <div class="chips">
+      <span class="chip">BPR 矩阵分解</span>
+      <span class="chip">同类上限重排</span>
+      <span class="chip">可解释理由</span>
+      <span class="chip">浏览器内实时打分</span>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+
+  <section class="card" id="demo">
+    <div class="card-head">
+      <h2>在线试用</h2>
+      <p class="hint">本页不含后端：模型参数（1411×32 与 3327×32 的隐向量）已从训练产物导出，打分、过滤、重排全部在你的浏览器里完成。BM25 文本意图与 K-Means 冷启动需要本地 Python 版。</p>
+    </div>
+
+    <form id="form" class="grid">
+      <div class="field">
+        <label for="user">用户 id（KuaiRec 小矩阵，如 1001）</label>
+        <div class="row">
+          <input id="user" name="user" type="number" min="0" value="1001" list="users">
+          <button type="button" class="ghost" id="randomUser" title="随机换一个用户">随机</button>
+        </div>
+        <p class="hint">数据集共 1411 个用户，id 形如 1001、4307。</p>
+      </div>
+
+      <div class="field">
+        <label>推荐条数 k（1–10）</label>
+        <input id="k" type="number" min="1" max="10" value="5">
+        <label for="mpc" style="margin-top:10px">同类目最多几条（1–5）</label>
+        <input id="mpc" type="number" min="1" max="5" value="2">
+      </div>
+
+      <div class="field wide">
+        <label>想看的类目（可多选，留空=全部）</label>
+        <div class="cats" id="cats"></div>
+      </div>
+
+      <div class="field wide">
+        <label class="inline"><input id="exclude" type="checkbox" checked> 不推荐训练期已看过的视频</label>
+        <div class="actions">
+          <button type="submit" class="primary">生成推荐</button>
+          <button type="button" class="ghost" id="surprise">约束太紧？试试“读书 + k=10”</button>
+        </div>
+      </div>
+    </form>
+
+    <div id="result" class="result" hidden></div>
+  </section>
+
+  <section class="card" id="metrics">
+    <div class="card-head">
+      <h2>实验结果（用户内 10% 留出，1411 用户）</h2>
+      <p class="hint">完整评估见仓库 <code>results/eval_summary.json</code>，每个数字都可由脚本重跑。</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>排序器</th><th>AUC</th><th>HR@10</th><th>NDCG@10</th><th>目录覆盖率</th></tr></thead>
+        <tbody>
+          <tr><td>随机</td><td>0.500</td><td>12.6%</td><td>5.7%</td><td>94.3%</td></tr>
+          <tr><td>全局热门</td><td>0.853</td><td>59.7%</td><td>38.4%</td><td>5.4%</td></tr>
+          <tr><td>ItemCF</td><td>0.852</td><td>59.7%</td><td>38.4%</td><td>5.7%</td></tr>
+          <tr><td>BM25 文本</td><td>0.494</td><td>9.4%</td><td>4.6%</td><td>74.5%</td></tr>
+          <tr class="hl"><td>BPR-MF</td><td>0.860</td><td>61.8%</td><td>40.3%</td><td>16.4%</td></tr>
+          <tr><td>BPR-MF + 同类上限重排</td><td>0.847</td><td>59.3%</td><td>32.6%</td><td>17.0%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">同类上限重排把推荐类目覆盖从 7.45 提升到 7.95（+6.7%），代价是 HR@10 下降 4.1%——这是我们在“多样性 vs 准确率”上的显式取舍。BM25 与 K-Means 冷启动的对照实验为负结果，已在报告中如实记录。</p>
+
+    <div class="figs">
+      <figure><img src="assets/img/fig_models.png" alt="六个排序器的 AUC、HR@10 与 NDCG@10"><figcaption>六个排序器的 AUC、HR@10 与 NDCG@10</figcaption></figure>
+      <figure><img src="assets/img/fig_ablation.png" alt="同类上限重排的消融"><figcaption>同类上限重排的准确率与多样性权衡</figcaption></figure>
+      <figure><img src="assets/img/fig_cold.png" alt="冷启动三种策略"><figcaption>冷启动三种策略的 HR@10</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="card" id="how">
+    <div class="card-head"><h2>本地运行完整版</h2></div>
+    <p class="hint">完整版包含 BM25 文本意图、K-Means 冷启动、七步执行轨迹与 16 项自测，纯 CPU、约 4 分钟可复现。</p>
+    <pre><code>git clone https://github.com/Cheetea555/kuairec-constrained-rec-agent.git
+cd kuairec-constrained-rec-agent
+pip install -r requirements.txt
+python scripts/download_data.py      # 约 630MB parquet
+python scripts/prepare_all.py
+python scripts/train_all.py
+python scripts/evaluate.py
+python web/app.py                    # http://127.0.0.1:5000</code></pre>
+    <div class="shots">
+      <figure><img src="assets/img/web_personalized.png" alt="Web 端个性化推荐结果与执行轨迹"><figcaption>本地 Web 端：推荐结果、逐条理由与七步执行轨迹</figcaption></figure>
+      <figure><img src="assets/img/web_coldstart.png" alt="Web 端冷启动结果"><figcaption>本地 Web 端：无历史用户的 K-Means 冷启动</figcaption></figure>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>数据集：KuaiRec（CC BY-SA 4.0）· 自研代码 MIT · <a href="https://github.com/Cheetea555/kuairec-constrained-rec-agent" target="_blank" rel="noopener">GitHub 仓库</a></p>
+    <p class="hint">本页为课程演示材料；推荐结果来自离线训练模型的真实参数，仅用于展示系统行为。</p>
+  </div>
+</footer>
+
+<datalist id="users"></datalist>
+<script src="app.js"></script>
+</body>
+</html>
