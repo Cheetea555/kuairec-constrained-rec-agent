@@ -1,0 +1,47 @@
+[
+  {
+    "config": "base_lr0.01_d32_e30",
+    "args": [
+      "--epochs",
+      "30"
+    ],
+    "best_hr": 0.6644,
+    "best_epoch": 30,
+    "sec": 86.6
+  },
+  {
+    "config": "lr0.05_d32_e30",
+    "args": [
+      "--epochs",
+      "30",
+      "--lr",
+      "0.05"
+    ],
+    "best_hr": 0.661,
+    "best_epoch": 30,
+    "sec": 87.0
+  },
+  {
+    "config": "lr0.01_d64_e30",
+    "args": [
+      "--epochs",
+      "30",
+      "--dim",
+      "64"
+    ],
+    "best_hr": 0.664,
+    "best_epoch": 10,
+    "sec": 167.5
+  },
+  {
+    "config": "uniform_neg_e30",
+    "args": [
+      "--epochs",
+      "30",
+      "--no-neg-from-label"
+    ],
+    "best_hr": 0.6086,
+    "best_epoch": 30,
+    "sec": 93.3
+  }
+]

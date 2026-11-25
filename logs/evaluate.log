@@ -1,0 +1,37 @@
+users=1411 items=3327 test_pos=340403 test_neg=127250 (neg/user median=81)
+score matrices ready: mf=(3327, 1411) cf=(3327, 1411)
+[留出] random           AUC=0.5003 HR@10=0.1259 NDCG@10=0.0573 (n=1411)
+[覆盖] random           目录=0.943 类目=7.93
+[留出] popular          AUC=0.8525 HR@10=0.5967 NDCG@10=0.3840 (n=1411)
+[覆盖] popular          目录=0.054 类目=7.23
+[留出] itemcf           AUC=0.8521 HR@10=0.5967 NDCG@10=0.3836 (n=1411)
+[覆盖] itemcf           目录=0.057 类目=7.23
+[留出] mf               AUC=0.8599 HR@10=0.6184 NDCG@10=0.4029 (n=1411)
+[覆盖] mf               目录=0.164 类目=7.45
+[留出] mf_div           AUC=0.8466 HR@10=0.5929 NDCG@10=0.3259 (n=1411)
+[覆盖] mf_div           目录=0.170 类目=7.95
+[留出] bm25             AUC=0.4943 HR@10=0.0944 NDCG@10=0.0459 (n=1411)
+[覆盖] bm25             目录=0.745 类目=6.86
+bm25 main-cat agreement=0.1243
+[留出] hybrid_A w=0.00  AUC=0.8612 HR@10=0.6236 NDCG@10=0.4057 (n=706)
+[留出] hybrid_A w=0.10  AUC=0.8611 HR@10=0.6234 NDCG@10=0.4049 (n=706)
+[留出] hybrid_A w=0.25  AUC=0.8608 HR@10=0.6231 NDCG@10=0.4036 (n=706)
+[留出] hybrid_A w=0.40  AUC=0.8602 HR@10=0.6219 NDCG@10=0.4012 (n=706)
+[留出] hybrid_A w=0.60  AUC=0.8592 HR@10=0.6191 NDCG@10=0.3962 (n=706)
+[留出] hybrid_A w=1.00  AUC=0.8567 HR@10=0.6134 NDCG@10=0.3840 (n=706)
+hybrid best w=0.00 (A 半 HR 增益 0.0000)
+[留出] hybrid_B w=0.00  AUC=0.8586 HR@10=0.6132 NDCG@10=0.4002 (n=705)
+[留出] mf_B             AUC=0.8586 HR@10=0.6132 NDCG@10=0.4002 (n=705)
+[留出] hybrid_B w=0.15  AUC=0.8584 HR@10=0.6123 NDCG@10=0.3991 (n=705)
+[留出] hybrid_full      AUC=0.8599 HR@10=0.6184 NDCG@10=0.4029 (n=1411)
+agent init 0.00s
+constraint sat=1.0000 (n=243) need_relax_rate=0.1900
+latency plain p50=3.2 p95=4.7; query p50=30.5 p95=48.4 ms
+[冷启动A] alpha=0.00 HR=0.8332 AUC=0.8082
+[冷启动A] alpha=0.25 HR=0.8296 AUC=0.8066
+[冷启动A] alpha=0.50 HR=0.8296 AUC=0.7979
+[冷启动A] alpha=0.75 HR=0.8260 AUC=0.7869
+[冷启动A] alpha=1.00 HR=0.7988 AUC=0.7746
+cold B 半 HR@10: 纯簇热度=0.8178 纯类目热门=0.8483 混合(alpha=0.00)=0.8483
+worst users: [{'user_id': 6111, 'hr10': 0.0219, 'train_pos': 1295, 'test_pos': 137, 'test_neg': 194}, {'user_id': 1042, 'hr10': 0.0225, 'train_pos': 917, 'test_pos': 89, 'test_neg': 243}, {'user_id': 4313, 'hr10': 0.0245, 'train_pos': 1460, 'test_pos': 163, 'test_neg': 169}, {'user_id': 223, 'hr10': 0.027, 'train_pos': 1382, 'test_pos': 148, 'test_neg': 183}, {'user_id': 2431, 'hr10': 0.0272, 'train_pos': 1362, 'test_pos': 147, 'test_neg': 184}]
+saved: results/eval_summary.json, results/eval_users.npz

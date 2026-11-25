@@ -1,0 +1,4 @@
+users=1411 items=3327
+itemcf sim built: shape=(3327, 3327) nonzero=11008828
+popularity: max=1243 median=1053
+saved: models/itemcf.npz, models/popularity.npz

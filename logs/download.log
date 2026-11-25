@@ -1,0 +1,3 @@
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]You have used a large amount of egress over the last 30 days. To protect our platform health, once you reach your account's max quota, your downloads will be throttled or blocked. If you regularly need more, you may consider upgrading your current user or organization plan to benefit from higher allowances.
+Fetching 4 files:  25%|¨€¨€¨„       | 1/4 [00:03<00:11,  3.99s/it]Fetching 4 files:  50%|¨€¨€¨€¨€¨€     | 2/4 [00:04<00:04,  2.03s/it]Fetching 4 files:  75%|¨€¨€¨€¨€¨€¨€¨€¨„  | 3/4 [03:52<01:45, 105.25s/it]Fetching 4 files: 100%|¨€¨€¨€¨€¨€¨€¨€¨€¨€¨€| 4/4 [11:25<00:00, 242.59s/it]Fetching 4 files: 100%|¨€¨€¨€¨€¨€¨€¨€¨€¨€¨€| 4/4 [11:25<00:00, 171.46s/it]
+done -> project\data\raw

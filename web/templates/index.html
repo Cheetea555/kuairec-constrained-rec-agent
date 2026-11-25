@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>约束感知短视频推荐 Agent</title>
+<style>
+  :root { --ink:#1a202c; --muted:#5b6b82; --line:#dbe3ec; --accent:#2b6cb0;
+          --accent-weak:#e8f0fa; --ok:#2f855a; --warn:#b7791f; --bad:#c53030; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#f4f7fb; color:var(--ink);
+         font:14px/1.6 "Microsoft YaHei","PingFang SC",sans-serif; }
+  .wrap { max-width:1000px; margin:0 auto; padding:28px 20px 60px; }
+  header h1 { font-size:22px; margin:0 0 6px; letter-spacing:.5px; }
+  header p { margin:0; color:var(--muted); font-size:13px; }
+  .chips { margin-top:10px; display:flex; gap:6px; flex-wrap:wrap; }
+  .chip { font-size:12px; color:var(--accent); background:var(--accent-weak);
+          border:1px solid #cfe0f3; border-radius:999px; padding:2px 10px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:12px;
+          padding:20px 22px; margin-top:18px; }
+  form .grid { display:grid; grid-template-columns:1fr 1fr; gap:14px 18px; }
+  label { display:block; font-size:12px; color:var(--muted); margin-bottom:5px; }
+  input, select { width:100%; padding:8px 10px; border:1px solid #ccd8e6;
+                  border-radius:8px; font-size:13px; background:#fff; color:var(--ink); }
+  input:focus, select:focus { outline:2px solid #bcd4ee; border-color:var(--accent); }
+  .hint { font-size:11px; color:#8a99ad; margin-top:4px; }
+  .actions { margin-top:16px; display:flex; align-items:center; gap:12px; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:8px;
+           padding:9px 22px; font-size:14px; cursor:pointer; }
+  button:hover { background:#245a94; }
+  .status { border-left:4px solid var(--ok); background:#f2fbf5; padding:12px 14px;
+            border-radius:6px; font-size:13px; }
+  .status.relax { border-color:var(--warn); background:#fffaeb; }
+  .status.err { border-color:var(--bad); background:#fff5f5; }
+  .stats { display:flex; gap:22px; flex-wrap:wrap; margin:14px 0 4px; }
+  .stat b { display:block; font-size:15px; }
+  .stat span { font-size:11px; color:var(--muted); }
+  table { width:100%; border-collapse:collapse; margin-top:10px; }
+  th { text-align:left; font-size:12px; color:var(--muted); font-weight:600;
+       border-bottom:1px solid var(--line); padding:8px 6px; }
+  td { border-bottom:1px solid #eef2f7; padding:8px 6px; font-size:13px;
+       vertical-align:top; }
+  td.rank { color:#9aa8bb; width:28px; }
+  td.reason { color:#41526b; font-size:12px; }
+  .score { font-variant-numeric:tabular-nums; color:var(--accent); }
+  .badge { font-size:11px; background:#eef2f7; border-radius:4px; padding:1px 6px;
+           color:#4a5a70; }
+  .trace { margin-top:12px; border-top:1px dashed var(--line); padding-top:12px; }
+  .trace h3, .notes h3 { font-size:13px; margin:0 0 8px; color:var(--muted); }
+  .steps { display:flex; flex-wrap:wrap; gap:8px; }
+  .steps li { list-style:none; font-size:11.5px; background:#f7fafc;
+              border:1px solid var(--line); border-radius:8px; padding:6px 9px; }
+  .steps li b { display:block; font-size:12px; color:var(--ink); }
+  .steps li em { font-style:normal; color:#8a99ad; }
+  .notes { margin-top:12px; font-size:12.5px; color:#7a5b17; }
+  .note-item { background:#fffaeb; border:1px solid #f2e3bd; border-radius:6px;
+               padding:6px 10px; margin-top:6px; }
+  footer { margin-top:26px; font-size:11.5px; color:#93a1b3; text-align:center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>约束感知短视频推荐 Agent</h1>
+    <p>在 KuaiRec 快手公开数据集上，按你的约束完成「召回 → BPR-MF 排序 → 多样性重排 → 理由生成」，并展示每一步的执行轨迹。</p>
+    <div class="chips">
+      <span class="chip">BPR 矩阵分解</span>
+      <span class="chip">BM25 文本召回</span>
+      <span class="chip">KMeans 冷启动</span>
+      <span class="chip">同类上限重排</span>
+    </div>
+  </header>
+
+  <div class="card">
+    <form method="post" action="/">
+      <div class="grid">
+        <div>
+          <label>老用户 id（KuaiRec 小矩阵，如 1001）</label>
+          <input type="number" name="user_id" value="{{ form.user_id or '' }}" placeholder="如 1001">
+          <div class="hint">留空并在右侧选兴趣 → 走 KMeans 冷启动</div>
+        </div>
+        <div>
+          <label>内容意图（可选，走 BM25 文本召回）</label>
+          <input type="text" name="query" value="{{ form.query or '' }}" placeholder="如：做饭 美食 教程">
+          <div class="hint">留空则只用类目约束与个性化排序</div>
+        </div>
+        <div>
+          <label>新用户声明的兴趣（冷启动，可多选）</label>
+          <select name="new_user" size="5" multiple>
+            {% for c in categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+          </select>
+        </div>
+        <div>
+          <label>想看的类目（可多选，留空=全部）</label>
+          <select name="categories" size="5" multiple>
+            {% for c in categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+          </select>
+        </div>
+        <div>
+          <label>推荐条数 k（1–10）</label>
+          <input type="number" name="top_k" min="1" max="10" value="{{ form.k or 5 }}">
+        </div>
+        <div>
+          <label>同一类目最多几条（1–5）</label>
+          <input type="number" name="max_per_cat" min="1" max="5" value="{{ form.mpc or 2 }}">
+        </div>
+      </div>
+      <div class="actions">
+        <button type="submit">生成推荐</button>
+        <span class="hint">约束不可行时不会硬凑：会明确提示需要放宽哪一项</span>
+      </div>
+    </form>
+  </div>
+
+  {% if result %}
+  <div class="card">
+    {% if result.status == 'OK' %}
+      {% set a = result.answer %}
+      <div class="status">已完成：{{ a.mode }}</div>
+      <div class="stats">
+        <div class="stat"><b>{{ a['items']|length }}</b><span>推荐条数</span></div>
+        <div class="stat"><b>{{ a.n_candidates }}</b><span>候选池</span></div>
+        <div class="stat"><b>{{ a.category_coverage|length }}</b><span>覆盖类目</span></div>
+        <div class="stat"><b>{{ result.latency_ms }} ms</b><span>端到端耗时</span></div>
+        {% if a.low_confidence %}<div class="stat"><b style="color:#b7791f">低置信</b><span>建议人工复核</span></div>{% endif %}
+      </div>
+
+      <table>
+        <tr><th>#</th><th>类目</th><th>视频文案</th><th>分数</th><th>推荐依据</th></tr>
+        {% for it in a['items'] %}
+        <tr>
+          <td class="rank">{{ loop.index }}</td>
+          <td><span class="badge">{{ it.category }}</span></td>
+          <td>{{ it.caption or '（无文案）' }}</td>
+          <td class="score">{{ '%.4f'|format(it.score) }}</td>
+          <td class="reason">{{ it.reason }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+
+      {% set notes = (a.notes or []) + (a.constraints.warnings or []) %}
+      {% if notes %}
+      <div class="notes">
+        <h3>提示</h3>
+        {% for n in notes %}<div class="note-item">{{ n }}</div>{% endfor %}
+      </div>
+      {% endif %}
+
+    {% elif result.status == 'NEED_RELAX' %}
+      <div class="status relax">【需要放宽约束】{{ result.answer.hint }}</div>
+    {% else %}
+      <div class="status err">【{{ '输入错误' if result.status == 'INPUT_ERROR' else '系统错误' }}】{{ result.detail.error }}</div>
+    {% endif %}
+
+    <div class="trace">
+      <h3>Agent 执行轨迹</h3>
+      <ul class="steps">
+        {% for s in result.trace %}
+        <li><b>{{ s.step }}</b>{{ s.output }}<br><em>{{ s.tool }} · {{ s.ms }} ms</em></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+
+  <footer>本项目为“机器学习”课程期末作业演示；本页面展示的是本地模型的真实推理结果。</footer>
+</div>
+</body>
+</html>
+

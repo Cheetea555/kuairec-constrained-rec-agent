@@ -1,0 +1,46 @@
+users=1411 items=3327 categories=38
+D:\anaconda3\Lib\site-packages\joblib\externals\loky\backend\context.py:136: UserWarning: Could not find the number of physical cores for the following reason:
+[WinError 2] 系统找不到指定的文件。
+Returning the number of logical cores instead. You can silence this warning by setting LOKY_MAX_CPU_COUNT to the number of cores you want to use.
+  warnings.warn(
+  File "D:\anaconda3\Lib\site-packages\joblib\externals\loky\backend\context.py", line 257, in _count_physical_cores
+    cpu_info = subprocess.run(
+        "wmic CPU Get NumberOfCores /Format:csv".split(),
+        capture_output=True,
+        text=True,
+    )
+  File "D:\anaconda3\Lib\subprocess.py", line 554, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\anaconda3\Lib\subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\anaconda3\Lib\subprocess.py", line 1554, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+                       ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+                             # no special security
+                             ^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+                             cwd,
+                             ^^^^
+                             startupinfo)
+                             ^^^^^^^^^^^^
+D:\anaconda3\Lib\site-packages\sklearn\cluster\_kmeans.py:1419: UserWarning: KMeans is known to have a memory leak on Windows with MKL, when there are less chunks than available threads. You can avoid it by setting the environment variable OMP_NUM_THREADS=6.
+  warnings.warn(
+cluster sizes: [170, 197, 269, 310, 15, 205, 126, 119]
+cluster 0: n=170 top_cats=['运动', '运动', '运动', '时尚', '民生资讯']
+cluster 1: n=197 top_cats=['生活', '舞蹈', '运动', '生活', '自拍']
+cluster 2: n=269 top_cats=['民生资讯', '时尚', '民生资讯', '民生资讯', '民生资讯']
+cluster 3: n=310 top_cats=['颜值', '自拍', '舞蹈', '摄影', '颜值']
+cluster 4: n=15 top_cats=['民生资讯', '民生资讯', '民生资讯', '科学与法律', '宠物']
+cluster 5: n=205 top_cats=['运动', '旅游', '汽车', '亲子', '民生资讯']
+cluster 6: n=126 top_cats=['汽车', '颜值', '运动', '颜值', '旅游']
+cluster 7: n=119 top_cats=['美食', '艺术', '运动', '运动', '汽车']
+saved: models/kmeans.joblib

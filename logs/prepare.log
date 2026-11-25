@@ -1,0 +1,8 @@
+users=1411 items=3327 pairs=4676570
+positive rate=0.7273
+cells / (users*items)=0.9962
+train pairs=4208917 (pos=0.7273)  test pairs=467653 (pos=0.7279)
+train users=1411 test users=1411
+items with caption/category: 3327 / 3327
+pool categories=38
+saved: items/train/test parquet -> data/processed
